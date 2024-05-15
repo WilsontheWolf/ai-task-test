@@ -1,0 +1,8 @@
+{
+  "name": "ai-cli",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "author": "WilsontheWolf (https://shorty.systems/)",
+  "license": "MPL-2.0",
+  "type": "module"
+}
