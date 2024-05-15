@@ -8,15 +8,14 @@ function makePrompt(task) {
     return `You must complete a task for a user. To do so, you must run commands in a bash-esque command prompt. 
 You may only run one command at a time. To run a command just type "> " followed the command and it's arguments. The system will show you the response.
 Once you have the info you need, then run send with the message to send to the user.
-When you are done all your actions, then run done.
 DO NOT run the same command over and over again.
-Do not apologize for any mistakes you make.
+If the command has newlines, make sure to put a \ before each line.
 Here are the commands you may run:
 Args wrapped in [] are optional.
 ${commands.map(command => `${command.name} ${command.usage ? `${command.usage}` : ''} - ${command.description}`).join('\n')}
 
-Below is your task. You must try to answer it to the best of your ability. You may use any of the commands to fulfill your task. Only do one thing at a time. Make sure commands are on their own line, and have "> " before them.
-Task: ${task}`
+Below is the user's message. You must try to answer it to the best of your ability. Make sure commands are on their own line, and have "> " before them.
+Message: ${task}`
 };
 
 class RequestHandler {
@@ -25,6 +24,7 @@ class RequestHandler {
         this.history = [{ role: "system", content: makePrompt(task) }]
         this.sent = false;
         this.runs = 0
+        this.alreadySent = false;
     }
 
     async doRequest(command) {
@@ -58,15 +58,16 @@ class RequestHandler {
             return;
         }
         this.history.push(msg);
+        console.log(ansi.RED(msg.content));
         msg.content = extractCommand(msg.content) ?? msg.content;
-        console.log(ansi.GREEN(msg.content));
+        ansi.printMessage(msg);
 
-        let resp = processCommand(msg.content, this.task);
+        let resp = processCommand(msg.content, this);
         if (resp.done) {
             return;
         }
         this.history.push({ role: "user", content: resp });
-        console.log(ansi.BLUE(resp));
+        ansi.printMessage(this.history[this.history.length - 1]);
         this.doRequest();
     }
 }

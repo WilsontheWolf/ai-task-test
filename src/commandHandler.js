@@ -23,8 +23,8 @@ const commands = [
         name: 'task',
         description: 'Repeats the task that you must complete.',
         usage: '',
-        exec: function (args, task) {
-            return task;
+        exec: function (args, handler) {
+            return handler.task + (handler.alreadySent ? '\n\nNote: You have already sent the message. As such, you may have completed the task.' : '');
         },
     },
     {
@@ -39,9 +39,16 @@ const commands = [
         name: 'send',
         description: 'Send a message to the user. NOTE: The user cannot respond.',
         usage: 'TEXT',
-        exec: function (args) {
+        additionalInfo: 'TEXT is the message you want to send to the user. If you are sending a message with newlines, make sure to escape them with a \\ before each newline.' 
+        + '\n Example: "> send Hello\\\nWorld!" will send "Hello\\nWorld!" to the user.'
+        + '\n Note: the user cannot respond. As such, do not wait for a response.',
+        exec: function (args, handler) {
+            if (!args) {
+                return 'Error: No message provided.';
+            }
             console.log(ansi.YELLOW(args));
-            return 'Message sent.'
+            handler.alreadySent = true;
+            return 'Message sent. If you are done with the task, run "> done".';
         },
     },
     {
@@ -71,7 +78,7 @@ function extractCommand(command) {
 }
 
 
-function processCommand(command, task) {
+function processCommand(command, handler) {
     let match = command.match(commandRegex);
     if (!match) {
         return 'Error: No command was found. Make sure it is on it\'s own line and starts with "> "';
@@ -82,7 +89,7 @@ function processCommand(command, task) {
     if (!commandObj) {
         return `Error: Command "${cmd}" not found. Run "help" to see the list of commands.`;
     }
-    return commandObj.exec(args, task);
+    return commandObj.exec(args, handler);
 }
 
 export {
