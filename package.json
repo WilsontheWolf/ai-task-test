@@ -4,5 +4,8 @@
   "main": "src/index.js",
   "author": "WilsontheWolf (https://shorty.systems/)",
   "license": "MPL-2.0",
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "@projectdysnomia/dysnomia": "^0.1.3"
+  }
 }
