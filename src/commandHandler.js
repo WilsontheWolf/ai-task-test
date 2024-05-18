@@ -22,8 +22,8 @@ const commands = [
         name: 'request',
         description: 'Prints the request that you must complete.',
         usage: '',
-        exec: function (args, handler) {
-            return "Here is the request you must fulfill:\n" + handler.request + (handler.alreadySent ? '\n\nNote: You have already sent the message. As such, you may have completed the request.' : '');
+        exec: async function (args, handler) {
+            return "Here is the request you must fulfill:\n" + handler.request + '\nThis was requested by ' + await handler.callbackHandler({ type: 'username' }) + (handler.alreadySent ? '\n\nNote: You have already sent the message. As such, you may have completed the request.' : '');
         },
     },
     {
@@ -55,7 +55,7 @@ const commands = [
         name: 'askyn',
         description: 'Ask\'s the user a yes or no question.',
         usage: 'QUESTION',
-        additionalInfo: 'QUESTION is the question you want to ask the user. The user can respond with "yes" or "no". If you want to tell the user something, use send.', 
+        additionalInfo: 'QUESTION is the question you want to ask the user. The user can respond with "yes" or "no". If you want to tell the user something, use send.',
         exec: async function (args, handler) {
             if (!args) {
                 return 'Error: No question provided.';

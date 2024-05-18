@@ -64,6 +64,8 @@ async function callbackHandler(message, data) {
         case 'message':
             message.channel.createMessage(data.content);
             break;
+        case 'username':
+            return message.author.globalName || message.author.username;
         case 'userinfo':
             return `Name: ${message.author.username}`
         case 'done':

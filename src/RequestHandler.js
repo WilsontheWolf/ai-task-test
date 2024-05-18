@@ -5,7 +5,7 @@ const url = 'http://10.0.0.169:11434/api/chat';
 const model = 'llama3';
 const name = "Helperbot";
 
-function makePrompt(request) {
+function makePrompt() {
     return `You must complete a request for a user. To do so, you must run commands in a command prompt. 
 You may only run one command at a time. To run a command just type "> " followed the command and it's arguments. The system will show you the response.
 Once you have the info you need, then run send with the message to send to the user.
@@ -18,21 +18,27 @@ Make sure commands are on their own line, and have "> " before them.`
 class RequestHandler {
     constructor(request, callbackHandler) {
         this.request = request;
-        this.history = [
-            { role: "system", content: makePrompt(request) },
-            { role: "assistant", content: "> help" },
-            { role: "user", content: commands.find(c => c.name === "help").exec(undefined, this) },
-            { role: "assistant", content: "> request" },
-            { role: "user", content: commands.find(c => c.name === "request").exec(undefined, this) },
-        ]
+        this.callbackHandler = callbackHandler;
         this.sent = false;
         this.runs = 0
         this.alreadySent = false;
         this.doneRepeat = false;
-        this.callbackHandler = callbackHandler;
+    }
+
+    async initHistory() {
+        this.history = [
+            { role: "system", content: makePrompt() },
+            { role: "assistant", content: "> help" },
+            { role: "user", content: await commands.find(c => c.name === "help").exec(undefined, this) },
+            { role: "assistant", content: "> request" },
+            { role: "user", content: await commands.find(c => c.name === "request").exec(undefined, this) },
+        ]
     }
 
     async doRequest(command) {
+        if(!this.history) {
+            await this.initHistory();
+        }
         if (this.runs > 40) {
             return;
         }

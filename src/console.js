@@ -8,6 +8,8 @@ async function callbackHandler(data) {
         case 'message':
             console.log(ansi.YELLOW(data.content));
             break;
+        case 'username':
+            return "WilsontheWolf";
         case 'userinfo':
             return "Name: WilsontheWolf\nBio: https://shorty.systems/\nMatrix: @shorty:shorty.systems\nI very much dislike how my username is lowercase"
         case 'done':
