@@ -33,7 +33,7 @@ class RequestHandler {
     }
 
     async doRequest(command) {
-        if (this.runs > 20) {
+        if (this.runs > 40) {
             return;
         }
         this.runs++;
@@ -47,7 +47,7 @@ class RequestHandler {
                 model,
                 stream: false,
             }),
-        }).catch(err => console.error(err));
+        });
 
         if (!response) {
             return;
@@ -73,7 +73,7 @@ class RequestHandler {
         if (resp) {
             this.history.push({ role: "user", content: resp });
         }
-        this.doRequest();
+        return this.doRequest();
     }
 }
 

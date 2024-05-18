@@ -1,12 +1,10 @@
-import ansi from "./ANSI.js";
-
 const commandRegex = /^> (\S+)(?: ([^\n]+))?/m;
 
 const commands = [
     {
         name: 'help',
         description: 'Shows additional help about commands',
-        usage: '[command]',
+        usage: '[COMMAND]',
         aliases: ['h', '?'],
         additionalInfo: 'If a command is provided, it will show additional help about that command. Else it will just show the list of commands.',
         exec: function (args) {
@@ -52,6 +50,19 @@ const commands = [
                 .then(() => 'Message sent. If you are done with the request, run "> done".')
                 .catch(e => `Error: ${e}`);
         },
+    },
+    {
+        name: 'askyn',
+        description: 'Ask\'s the user a yes or no question.',
+        usage: 'QUESTION',
+        additionalInfo: 'QUESTION is the question you want to ask the user. The user can respond with "yes" or "no". If you want to tell the user something, use send.', 
+        exec: async function (args, handler) {
+            if (!args) {
+                return 'Error: No question provided.';
+            }
+            let res = await handler.callbackHandler({ type: 'askYN', content: args }).catch(e => `Error: ${e}`);
+            return res;
+        }
     },
     {
         name: 'userinfo',
